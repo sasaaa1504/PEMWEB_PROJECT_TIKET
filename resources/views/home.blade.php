@@ -11,26 +11,25 @@
     </div>
 </section>
 
-<section class="py-5 bg-dark text-light">
-    <div class="container">
-        <h2 class="text-center text-pink mb-4">Event Hype & Segera Tayang</h2>
-        <div class="row">
-            @forelse($events as $event)
-                <div class="col-md-4 mb-4">
-                    <div class="card bg-black border-pink shadow-sm h-100">
-                        <img src="{{ asset('storage/' . $event->image) }}" class="card-img-top" alt="{{ $event->name }}" style="height: 200px; object-fit: cover;">
-                        <div class="card-body">
-                            <h5 class="card-title text-pink">{{ $event->name }}</h5>
-                            <p class="card-text"><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }}</p>
-                            <p class="card-text"><strong>Lokasi:</strong> {{ $event->venue }}</p>
-                            <a href="{{ url('/event/' . $event->id) }}" class="btn btn-outline-pink mt-2">Lihat Detail</a>
-                        </div>
+{{-- Section Event Terdekat --}}
+<div class="container py-4">
+    <h2 class="mb-4">Konser Terdekat</h2>
+    <div class="row">
+        @forelse ($events as $event)
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 shadow-sm">
+<img src="{{ asset('storage/' . $event->image) }}" class="card-img-top" alt="{{ $event->name }}">
+                    <div class="card-body d-flex flex-column">
+<h5 class="card-title">{{ $event->name }}</h5>                        <p class="mb-1 text-muted">{{ $event->venue }}</p>
+                        <p class="mb-1"><i class="bi bi-calendar"></i> {{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }}</p>
+<p class="fw-bold mb-2">Rp{{ number_format($event->price, 0, ',', '.') }}</p>                        <a href="{{ route('events.show', $event->id) }}" class="btn btn-sm btn-primary mt-auto">Lihat Detail</a>
                     </div>
                 </div>
-            @empty
-                <p class="text-center text-light">Belum ada event tersedia.</p>
-            @endforelse
-        </div>
+            </div>
+        @empty
+            <p>Tidak ada konser terdekat saat ini.</p>
+        @endforelse
     </div>
-</section>
+</div>
+
 @endsection

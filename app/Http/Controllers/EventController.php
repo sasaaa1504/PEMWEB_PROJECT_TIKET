@@ -10,12 +10,43 @@ use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
-    public function index()
-    {
-        $events = Event::all();
-        return view('events.index', compact('events'));
-        
+public function index(Request $request)
+{
+    $query = Event::query();
+
+    // Filter lokasi
+    if ($request->filled('lokasi')) {
+        $query->where('venue', 'like', '%' . $request->lokasi . '%');
     }
+
+    // Filter tanggal
+    if ($request->filled('tanggal')) {
+        $query->whereDate('event_date', $request->tanggal);
+    }
+
+    // Filter harga maksimal
+    if ($request->filled('harga')) {
+        $query->where('price', '<=', $request->harga);
+    }
+
+    // Sorting
+    if ($request->sort == 'termurah') {
+        $query->orderBy('price', 'asc');
+    } elseif ($request->sort == 'terbaru') {
+        $query->orderBy('event_date', 'desc');
+    } else {
+        $query->orderBy('event_date', 'asc');
+    }
+
+    // Pagination, 10 data per halaman
+    $events = $query->paginate(10);
+
+    // Supaya query string pagination tetap bawa parameter filter/sort
+    $events->appends($request->all());
+
+    return view('events.index', compact('events'));
+}
+
 
     public function create()
     {

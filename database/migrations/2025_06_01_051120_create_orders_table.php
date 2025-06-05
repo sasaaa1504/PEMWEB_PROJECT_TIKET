@@ -1,24 +1,22 @@
 <?php
 
+// database/migrations/2025_06_05_000002_create_orders_table.php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateOrdersTable extends Migration
 {
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('order_number', 20)->unique(); // Nomor pesanan
-            $table->decimal('total_amount', 12, 2); // Total pembayaran
-            $table->enum('status', ['pending', 'paid', 'cancelled', 'expired'])->default('pending');
-            $table->string('payment_method', 50)->nullable(); // Metode pembayaran
-            $table->string('payment_proof')->nullable(); // Bukti pembayaran
-            $table->text('notes')->nullable(); // Catatan pesanan
-            $table->dateTime('expired_at')->nullable(); // Batas waktu pembayaran
-            $table->dateTime('paid_at')->nullable(); // Waktu pembayaran
+            $table->foreignId('event_id')->constrained()->onDelete('cascade');
+            $table->foreignId('ticket_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('jumlah_tiket');
+            $table->unsignedBigInteger('total_harga');
             $table->timestamps();
         });
     }
@@ -27,4 +25,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('orders');
     }
-};
+}

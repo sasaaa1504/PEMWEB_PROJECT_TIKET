@@ -17,15 +17,25 @@
         <li class="list-group-item"><strong>Deskripsi:</strong><br>{!! nl2br(e($event->description)) !!}</li>
     </ul>
 
-    <a href="{{ route('events.index') }}" class="btn btn-secondary">Kembali ke Daftar Event</a>
+    {{-- Form pembelian tiket, bisa diakses guest --}}
+    <form action="{{ route('order.store', $event->id) }}" method="POST">
+        @csrf
+        <label for="jumlah_tiket">Jumlah Tiket:</label>
+        <input type="number" name="jumlah_tiket" min="1" required>
+        <a href="{{ route('order.buy', $event->id) }}" class="btn btn-primary">Beli Tiket</a>
+    </form>
 
-    @if(Auth::check() && Auth::id() == $event->user_id)
-        <form action="{{ route('events.destroy', $event->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus event ini?');" style="display:inline-block;">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger">Hapus Event</button>
-        </form>
-    @endif
+    <a href="{{ url('/') }}" class="btn btn-secondary mt-3">Kembali ke Beranda</a>
 
+    {{-- Tombol hapus event hanya untuk owner yang login --}}
+    @auth
+        @if(Auth::id() == $event->user_id)
+            <form action="{{ route('events.destroy', $event->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus event ini?');" style="display:inline-block; margin-top:10px;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Hapus Event</button>
+            </form>
+        @endif
+    @endauth
 </div>
 @endsection

@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Event;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class LandingController extends Controller
 {
-    public function index()
-    {
-        $events = DB::table('events')
-            ->where('event_date', '>=', now())
-            ->orderBy('event_date', 'asc')
-            ->limit(6)
-            ->get();
-
-        return view('home', compact('events'));
-    }
+public function index()
+{
+$events = Event::where('event_date', '>=', Carbon::now())
+    ->orderBy('event_date', 'asc')
+    ->take(4)
+    ->get();
+    return view('home', compact('events'));
+}
 }

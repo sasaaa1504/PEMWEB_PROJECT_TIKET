@@ -9,6 +9,7 @@ use App\Http\Controllers\EoRegisterController;
 use App\Http\Controllers\EoLoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\OrderController;
 
 // Landing Page
 Route::get('/', [LandingController::class, 'index'])->name('home');
@@ -42,18 +43,25 @@ Route::get('/dashboard/eo', [EventController::class, 'eoIndex'])->middleware('au
 // Detail Event untuk Guest
 Route::get('/event/{id}', [EventController::class, 'show'])->name('events.show');
 
+// 🟢 Form pemesanan tiket (khusus user login)
 Route::middleware(['auth'])->group(function () {
+    // Form beli tiket (tahap 2)
     // Dashboard EO
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.eo');
 
-    // Event CRUD
-    Route::get('/events', [EventController::class, 'eoIndex'])->name('events.index'); // khusus EO
+    // Event CRUD khusus EO
+    Route::get('/events', [EventController::class, 'eoIndex'])->name('events.index');
     Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
     Route::get('/events/{id}/edit', [EventController::class, 'edit'])->name('events.edit');
     Route::put('/events/{id}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
+
     // Profile edit & update
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update'); // Ganti post jadi put
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
+
+    Route::get('/events/{event}/buy', [OrderController::class, 'showBuyForm'])->name('order.buy');
+    Route::post('/events/{event}/buy', [OrderController::class, 'store'])->name('order.store');
+

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = [
         'user_id',
         'order_number',
@@ -20,52 +20,47 @@ class Order extends Model
         'expired_at',
         'paid_at'
     ];
-    
+
     protected $casts = [
         'total_amount' => 'decimal:2',
         'expired_at' => 'datetime',
         'paid_at' => 'datetime',
     ];
-    
-    // Relasi: Order milik satu user
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    
-    // Relasi: Order punya banyak order items
+
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
     }
-    
-    // Scope untuk status tertentu
+
+    public function tickets()
+    {
+        return $this->hasManyThrough(Ticket::class, OrderItem::class, 'order_id', 'id', 'id', 'ticket_id');
+    }
+
     public function scopeStatus($query, $status)
     {
         return $query->where('status', $status);
     }
-    
-    // Accessor untuk format total
+
     public function getFormattedTotalAttribute()
     {
         return 'Rp ' . number_format($this->total_amount, 0, ',', '.');
     }
-    
-    // Generate nomor order otomatis
+
     public static function generateOrderNumber()
     {
         $prefix = 'HT';
         $date = now()->format('ymd');
-        $lastOrder = self::whereDate('created_at', today())
-                         ->orderBy('id', 'desc')
-                         ->first();
-        
+        $lastOrder = self::whereDate('created_at', today())->orderBy('id', 'desc')->first();
         $number = $lastOrder ? (int)substr($lastOrder->order_number, -4) + 1 : 1;
-        
         return $prefix . $date . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
-    
-    // Cek apakah order sudah expired
+
     public function isExpired()
     {
         return $this->expired_at && now()->gt($this->expired_at) && $this->status === 'pending';

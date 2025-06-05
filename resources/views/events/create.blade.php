@@ -31,7 +31,7 @@
 
         <div class="mb-3">
             <label for="venue" class="form-label">Lokasi (Venue)</label>
-            <input type="text" name="venue" id="venue" class="form-control" value="{{ old('venue') }}">
+            <input type="text" name="venue" id="venue" class="form-control" value="{{ old('venue') }}" required>
         </div>
 
         <div class="mb-3">
@@ -41,12 +41,12 @@
 
         <div class="mb-3">
             <label for="description" class="form-label">Deskripsi</label>
-            <textarea name="description" id="description" class="form-control" rows="4">{{ old('description') }}</textarea>
+            <textarea name="description" id="description" class="form-control" rows="4">{{ old('description') }}</textarea required>
         </div>
 
         <div class="mb-3">
             <label for="image" class="form-label">Gambar Event (Opsional)</label>
-            <input type="file" name="image" id="image" class="form-control" accept="image/*">
+            <input type="file" name="image" id="image" class="form-control" accept="image/*" required>
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan Event</button>
